@@ -4,7 +4,7 @@ A low-power e-paper smartwatch built around the **nRF52840**, designed for long 
 
 The platform integrates a **1.54" e-paper display**, **BLE 5.0**, **USB-C charging**, **battery fuel gauging**, **accelerometer-based activity tracking**, and a **haptic feedback driver**, all inside a compact custom enclosure.
 
-![InkTime Watch Render](Images/Diagrama.jpg)
+![InkTime Watch Render](Images/Diagrama.png)
 
 ---
 
