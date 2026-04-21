@@ -4,7 +4,7 @@ A low-power e-paper smartwatch built around the **nRF52840**, designed for long 
 
 The platform integrates a **1.54" e-paper display**, **BLE 5.0**, **USB-C charging**, **battery fuel gauging**, **accelerometer-based activity tracking**, and a **haptic feedback driver**, all inside a compact custom enclosure.
 
-![InkTime Watch Render](Images/InkTime_Watch.jpg)
+![InkTime Watch Render](Images/Diagrama.jpg)
 
 ---
 
@@ -51,6 +51,38 @@ The system is centered on the **Nordic nRF52840**, which handles BLE communicati
                               │ 3.3V → PFET → Switched EPD Rail           │
                               └─────────────────────────────────────────────┘
 
+
+Bill of Materials (BOM)
+Active & Critical Components
+Component	Description	Package	Part	Datasheet
+nRF52840	Multi-protocol BLE 5.0 Cortex-M4F MCU	AQFN-73	C190794	Nordic nRF52840
+BQ25180YBGR	I2C Controlled 1A Linear LiPo Charger	DSBGA-8	BQ25180YBGR	TI BQ25180
+MAX17048G+T10	Micropower 1-Cell Fuel Gauge	TDFN-8	C2682616	Maxim MAX17048
+RT6160AWSC	High-Efficiency Buck-Boost Converter (3.3V)	WLCSP-15	C7065276	Richtek RT6160A
+BMA421	Ultra-Low Power IMU / Step Counter	LGA-12	C5242966	Bosch BMA421
+DRV2605YZFR	Haptic Driver for LRA/ERM	DSBGA-9	C527464	TI DRV2605
+2450AT18B100E	2.4GHz Chip Antenna	1206	C2917717	Johanson
+USBLC6-2SC6Y	Low capacitance ESD protection	SOT-23-6	C2969755	ST USBLC6-2
+KH-TYPE-C-16P	USB Type-C Receptacle	SMD	C168704	Generic
+503480-2400	24-Pin FPC Connector (EPD)	SMD	—	Molex
+DMG2305UX	P-Channel MOSFET (EPD Power)	SOT-23	C2940629	Diodes Inc
+MBR0530	Schottky Diode (EPD Pump)	SOD-123	C77336	Onsemi
+TC2030-IDC	6-Pin Tag-Connect SWD	PCB Footprint	Tag-Connect	Tag-Connect
+Passive Components
+Component	Value	Package	Qty	Function
+Capacitors (decoupling)	100nF	0201	5	MCU + peripherals
+Capacitors (crystal load)	12pF	0201	4	Crystal stabilization
+Capacitors (bulk)	4.7uF	0402	4	Power buffering
+Capacitors (USB)	4.7uF	0402	1	USB decoupling
+Capacitors (power)	22uF	0402	2	RT6160 input
+Capacitors (charger)	1uF	0402	3	BQ25180 support
+Capacitors (EPD)	1uF / 50V	0402	9	Display driver
+Inductor (MCU DC/DC)	10uH	0402	1	nRF52840 regulator
+Inductor (buck-boost)	0.47uH	2012	1	RT6160
+Resistors (I2C)	10k	0201	2	Pull-ups
+Resistors (USB CC)	5.1k	0201	2	USB-C config
+Crystal	32 MHz	2016	1	RF + MCU clock
+Crystal	32.768 kHz	3215	1	RTC
                               Main Features
 nRF52840 BLE-enabled microcontroller
 1.54" e-paper display with SPI interface
