@@ -54,21 +54,23 @@ The system is centered on the **Nordic nRF52840**, which handles BLE communicati
 
 Bill of Materials (BOM)
 Active & Critical Components
-Component	Description	Package	Part	Datasheet
-nRF52840	Multi-protocol BLE 5.0 Cortex-M4F MCU	AQFN-73	C190794	Nordic nRF52840
-BQ25180YBGR	I2C Controlled 1A Linear LiPo Charger	DSBGA-8	BQ25180YBGR	TI BQ25180
-MAX17048G+T10	Micropower 1-Cell Fuel Gauge	TDFN-8	C2682616	Maxim MAX17048
-RT6160AWSC	High-Efficiency Buck-Boost Converter (3.3V)	WLCSP-15	C7065276	Richtek RT6160A
-BMA421	Ultra-Low Power IMU / Step Counter	LGA-12	C5242966	Bosch BMA421
-DRV2605YZFR	Haptic Driver for LRA/ERM	DSBGA-9	C527464	TI DRV2605
-2450AT18B100E	2.4GHz Chip Antenna	1206	C2917717	Johanson
-USBLC6-2SC6Y	Low capacitance ESD protection	SOT-23-6	C2969755	ST USBLC6-2
-KH-TYPE-C-16P	USB Type-C Receptacle	SMD	C168704	Generic
-503480-2400	24-Pin FPC Connector (EPD)	SMD	—	Molex
-DMG2305UX	P-Channel MOSFET (EPD Power)	SOT-23	C2940629	Diodes Inc
-MBR0530	Schottky Diode (EPD Pump)	SOD-123	C77336	Onsemi
-TC2030-IDC	6-Pin Tag-Connect SWD	PCB Footprint	Tag-Connect	Tag-Connect
-Passive Components
++----------------------+-------------------------------------------+-----------+------------+----------------------+
+| Component            | Description                               | Package   | Part       | Datasheet            |
++----------------------+-------------------------------------------+-----------+------------+----------------------+
+| nRF52840             | BLE 5.0 Cortex-M4F MCU                   | AQFN-73   | C190794    | Nordic nRF52840      |
+| BQ25180YBGR          | 1A LiPo Charger (I2C)                    | DSBGA-8   | BQ25180YBGR| TI BQ25180           |
+| MAX17048G+T10        | Fuel Gauge                              | TDFN-8    | C2682616   | Maxim MAX17048       |
+| RT6160AWSC           | 3.3V Buck-Boost                         | WLCSP-15  | C7065276   | Richtek RT6160A      |
+| BMA421               | IMU / Step Counter                      | LGA-12    | C5242966   | Bosch BMA421         |
+| DRV2605YZFR          | Haptic Driver                           | DSBGA-9   | C527464    | TI DRV2605           |
+| 2450AT18B100E        | 2.4GHz Antenna                          | 1206      | C2917717   | Johanson             |
+| USBLC6-2SC6Y         | USB ESD Protection                      | SOT-23-6  | C2969755   | ST USBLC6-2          |
+| KH-TYPE-C-16P        | USB-C Connector                         | SMD       | C168704    | Generic              |
+| 503480-2400          | 24-pin FPC (EPD)                        | SMD       | —          | Molex                |
+| DMG2305UX            | P-MOSFET (EPD power)                    | SOT-23    | C2940629   | Diodes Inc           |
+| MBR0530              | Schottky Diode                          | SOD-123   | C77336     | Onsemi               |
+| TC2030-IDC           | SWD Tag-Connect                         | PCB       | —          | Tag-Connect          |
++----------------------+-------------------------------------------+-----------+------------+----------------------+
 Component	Value	Package	Qty	Function
 Capacitors (decoupling)	100nF	0201	5	MCU + peripherals
 Capacitors (crystal load)	12pF	0201	4	Crystal stabilization
