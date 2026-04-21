@@ -90,168 +90,220 @@ Passive Components
 | Crystal                     | 32 MHz    | 2016   | 1   | MCU / RF clock             |
 | Crystal                     | 32.768 kHz| 3215   | 1   | RTC                        |
 +-----------------------------+-----------+--------+-----+-----------------------------+
-                              Main Features
-nRF52840 BLE-enabled microcontroller
-1.54" e-paper display with SPI interface
-BQ25180 charger and power path management
-RT6160 buck-boost regulator for stable 3.3V rail
-MAX17048 fuel gauge for battery monitoring
-BMA421 accelerometer for motion / step tracking
-DRV2605L haptic driver for vibration feedback
-USB Type-C charging and USB data interface
-Tag-Connect SWD footprint for debugging/programming
-Compact custom PCB + enclosure integration
-Bill of Materials (BOM)
-Active Components
-Component	Part Number	Package	Function
-MCU	nRF52840-QIAA-R	aQFN73	Main microcontroller + BLE + USB
-Charger / Power Path	BQ25180YBGR	DSBGA-8	Li-Ion/LiPo charger with power-path
-Buck-Boost Regulator	RT6160AWSC	WLCSP-15	3.3V system regulator
-Fuel Gauge	MAX17048G+T10	DFN-8	Battery state-of-charge monitor
-Accelerometer	BMA421	LGA-12	Motion / step detection
-Haptic Driver	DRV2605LDGSR	VSSOP-10	ERM vibration motor driver
-PFET	SI2301CDS	SOT-23	E-paper rail power switching
-USB ESD Protection	USBLC6-2SC6Y	SOT-23-6	USB data line protection
-Connectors & Electromechanical
-Component	Part Number	Package	Function
-Display Connector	Molex 503480-2400	24-pin FPC	E-paper display interface
-USB Connector	KH-TYPE-C-16P	USB-C SMD	Charging + USB data
-Buttons (x3)	EVP-AKE31A	SMD tactile	User input
-SWD Debug Header	TC2030-IDC	Tag-Connect	Programming / debug
-Antenna	2450AT18B100E	SMD	2.4 GHz BLE antenna
-Vibration Motor	LCM1027B3605F	Wire leads	Haptic feedback
-Important Passive Components
-Component Type	Value	Package	Qty	Function
-Decoupling capacitors	100nF	0201	multiple	Local supply decoupling
-Crystal load capacitors	12pF	0201	4	Crystal load network
-Bulk capacitors	4.7uF	0402	multiple	Local bulk decoupling
-Charger capacitors	1uF / 10uF	0402	multiple	Charger input/output support
-E-paper capacitors	1uF / 50V	0402	multiple	Display driver support
-USB CC resistors	5.1k	0201	2	USB-C configuration
-I2C pull-ups	10k	0201	2	SDA / SCL pull-up
-DC/DC inductor	0.47uH	2012	1	RT6160 power stage
-MCU DC/DC inductor	10uH	0402	1	nRF52840 REG1 support
-Hardware Architecture
-1. Microcontroller - nRF52840
 
-The nRF52840 is the main controller of the system and provides:
+## Hardware Description
 
-Bluetooth Low Energy connectivity
-Native USB 2.0
-GPIO control for buttons, power gating, interrupts, and debug
-SPI for the e-paper display
-I2C for sensors and power ICs
+### MCU - nRF52840
 
-The MCU uses:
+The **nRF52840** is the central processing unit of the InkTime watch. It integrates:
 
-32 MHz crystal for high-frequency operation and BLE radio
-32.768 kHz crystal for RTC timekeeping
-dedicated decoupling and internal regulator support capacitors
-2. Power System
+- **ARM Cortex-M4F** running at **64 MHz**, with floating-point unit
+- **Bluetooth Low Energy 5.0**, used for time synchronization, notifications, and wireless communication
+- **USB 2.0 Full Speed**, used for charging detection and firmware-related USB functionality
+- **1 MB Flash** and **256 KB RAM**
 
-The board uses a battery-powered architecture with USB charging and a regulated 3.3V rail.
+The MCU coordinates all peripherals on the board. Communication with external devices is handled through:
 
-Power path:
-USB 5V enters through the USB-C connector
-BQ25180 manages charging and power-path behavior
-RT6160 generates the main 3.3V rail
-MAX17048 monitors battery voltage and charge state
-a PFET is used to switch the e-paper display supply rail
-Main rails:
-VBUS – USB input
-VBAT – battery rail
-SYS – charger output / system rail
-3V3 – regulated main logic rail
-VEPD – switched rail for e-paper circuitry
-3. E-Paper Display Subsystem
+- **SPI** for the e-paper display
+- **I2C** for the motion sensor, fuel gauge, charger, regulator, and haptic driver
 
-The e-paper display is connected through a 24-pin FPC connector and controlled via SPI.
+In addition to the communication buses, the MCU also manages:
+- GPIO-based control lines for the display
+- interrupt lines from peripherals
+- button inputs
+- haptic enable control
+- SWD programming and debugging
 
-Main signals:
+---
 
-SCK
-MOSI
-CS
-DC
-RST
-BUSY
+### Power Architecture
 
-A dedicated PFET is used to switch display power in order to reduce leakage and improve overall battery life.
+The power system is designed around a rechargeable **single-cell Li-Po battery** and a **USB-C charging interface**.
 
-4. Accelerometer - BMA421
+```text
+USB-C --> BQ25180 (charger / power path) --> Battery charging
+                                     --> System rail
 
-The BMA421 accelerometer is connected via I2C and provides:
+Battery --> MAX17048 --> battery monitoring
+System rail / regulated rail --> MCU + peripherals
+Display high-voltage rails --> generated by dedicated E-paper drive circuitry
 
-step counting
+BQ25180YBGR
+
+The BQ25180 is the main charger and power-path management IC. It:
+
+charges the Li-Po battery
+monitors VBUS
+provides system power management
+generates interrupt/status events through PMIC_INT
+communicates with the MCU over I2C
+RT6160AWSC
+
+The RT6160AWSC is used in the board power architecture as a switching regulator that helps generate the required regulated rail for the system.
+
+MAX17048G+T10
+
+The MAX17048 is a battery fuel gauge that monitors the battery voltage and estimates the state of charge (SOC) over I2C, allowing the firmware to display battery level and low-battery warnings.
+
+E-Paper Display
+
+The e-paper display is connected through an FPC connector and communicates with the MCU over SPI, together with several control GPIOs.
+
+Signal	Direction	Description
+SCK	MCU → EPD	SPI clock
+MOSI	MCU → EPD	SPI data
+EPD_CS	MCU → EPD	Chip select
+EPD_DC	MCU → EPD	Data / Command select
+EPD_RST	MCU → EPD	Hardware reset
+EPD_BUSY	EPD → MCU	Busy flag
+
+The display power rail is switched through a dedicated P-channel MOSFET, controlled by the MCU, so the panel can be powered only when needed. This reduces idle leakage and improves battery life.
+
+The display driver circuitry generates the dedicated voltages required by the e-paper panel, such as:
+
+PREVGH
+PREVGL
+VCOM
+other gate/source driving rails required by the display
+Motion Sensor - BMA421
+
+The BMA421 is a low-power 3-axis accelerometer connected over I2C. It provides:
+
 motion detection
-wake-up interrupt capability
+step counting
+orientation and activity-related sensing
+interrupt-based wake-up functionality
 
-It is used as the low-power motion sensing block of the watch.
+Two interrupt lines are connected to the MCU:
 
-5. Fuel Gauge - MAX17048
+IMU_INT1 for primary motion/step events
+IMU_INT2 for additional event signaling or future extensions
 
-The MAX17048 provides battery monitoring and state-of-charge estimation.
-It connects directly to the battery rail and communicates with the MCU over I2C.
+This allows the MCU to remain in a low-power state and wake only when meaningful motion events occur.
 
-6. Haptic Feedback - DRV2605L + ERM Motor
+Haptic Feedback - DRV2605 + ERM Motor
 
-The DRV2605L haptic driver controls an ERM vibration motor and is connected via I2C.
+The DRV2605YZFR haptic driver controls the vibration motor used for user feedback. It connects to the MCU over I2C and also uses a dedicated digital enable signal:
 
-It is used for:
+HAPTIC_EN enables or disables the driver
+OUT+ / OUT- drive the ERM motor
+the chip supports waveform-based playback using its internal effects library
 
-alert vibration
-notification feedback
-user interaction feedback
-7. USB Type-C Interface
+The haptic subsystem is used for:
 
-The USB-C connector provides:
+notifications
+alerts
+button feedback
+warning indications
+USB Interface - KH-TYPE-C-16P + USBLC6-2SC6Y
 
-charging input
-USB 2.0 D+ / D-
-VBUS detection
-ESD protection through USBLC6-2SC6Y
-proper USB-C device configuration using 5.1k CC resistors
-8. SWD Debug Interface
+The board uses a USB Type-C connector for charging and USB connectivity.
 
-A Tag-Connect TC2030-IDC footprint is used for:
+Main USB-related functions:
 
-programming
-firmware upload
-SWD debugging
-board bring-up and recovery
+battery charging through VBUS
+USB 2.0 D+ / D- lines connected to the nRF52840
+ESD protection on USB data lines using USBLC6-2SC6Y
+USB attach / power detection using the VBUS signal
 
-This avoids using a permanently mounted debug header and saves space.
+The USB D+ / D- lines connect directly to the nRF52840 USB transceiver, while the USB-C configuration network ensures proper device operation.
 
-9. RF / Antenna Section
+RF Section - 2450AT18B100E Antenna
 
-BLE communication is handled through a 2.4 GHz chip antenna and a matching network connected to the nRF52840 RF pin.
+The board uses a 2.4 GHz chip antenna for BLE communication.
 
-The antenna area requires:
+Key layout requirements for the RF section:
 
-dedicated keepout
-clean ground strategy
-short RF path
-careful matching network placement
+the antenna is placed at the PCB edge
+copper is removed from the antenna keepout area
+no signal traces are routed underneath the antenna
+an impedance matching network is placed between the MCU RF pin and the antenna
 
+This section is critical for BLE performance and must follow the recommended RF layout constraints.
 
+SWD Debug - TC2030-IDC
 
-PCB Design
-Layout Strategy
+Programming and debugging are performed through a Tag-Connect TC2030-IDC footprint.
 
-The PCB layout was designed with the following priorities:
+The debug interface includes:
 
-keep RF section isolated
-keep charger / regulator away from antenna
-place buttons on the user-facing edge
-keep USB-C aligned with enclosure
-route power first, then USB, RF, and remaining signals
-keep decoupling capacitors as close as possible to IC power pins
-Design Considerations
-compact placement around the nRF52840
-dedicated matching area for the antenna
-accessible SWD debug interface
-grouped test points for power and debug
-display connector positioned to match enclosure integration
+SWDIO
+SWDCLK
+nRESET
+3.3V reference
+GND
+
+Additional exposed test pads are available for easier bring-up and debugging:
+
+TP_SWDIO
+TP_SWDCLK
+TP_RESET
+TP_3.3V
+TP_GND
+
+This allows programming and debugging without a permanently mounted header.
+
+nRF52840 Pinout Specification
+Shared I2C Bus
+
+All I2C peripherals share the same bus, with pull-up resistors to 3.3V.
+
+Pin	Function	Connected Devices
+P0.06	SDA	BMA421, MAX17048, BQ25180, RT6160, DRV2605
+P0.07	SCL	BMA421, MAX17048, BQ25180, RT6160, DRV2605
+SPI Bus - E-Paper Display
+Pin	Function	Description
+P0.02	SCK	SPI clock for e-paper display
+P0.03	MOSI	SPI data to e-paper display
+P0.05	CS	E-paper chip select
+P0.15	DC	Data / Command select
+P0.16	RST	Display hardware reset
+P0.17	BUSY	Display busy/status input
+Display Power Control
+Pin	Function	Description
+P1.01	PFET Gate Control	Enables/disables the display power rail
+Interrupts and Peripheral Control
+Pin	Function	Description
+P0.08	IMU_INT1	Primary motion / step wake interrupt
+P1.08	IMU_INT2	Secondary motion interrupt
+P0.10	ALRT	Fuel gauge alert / low battery interrupt
+P0.11	PMIC_INT	Charger interrupt / status signal
+P0.12	HAPTIC_EN	Enables the haptic driver
+Physical Buttons
+
+All buttons are connected as active-low inputs to GND.
+
+Pin	Function
+P0.13	Up Button
+P0.14	Down Button
+P1.00	Enter / Esc Button
+Clocks and Debug
+Pin / Signal	Function
+XC1 / XC2	32 MHz crystal
+XL1 / XL2	32.768 kHz crystal
+SWDIO	SWD debug data
+SWDCLK	SWD debug clock
+nRESET	MCU reset
+VBUS	USB power / attach detection
+D+ / D-	Native USB 2.0
+ANT	RF output to matching network and antenna
+Pin Assignment Rationale
+
+The pin assignment was chosen to keep routing compact and logically grouped:
+
+I2C on P0.06 / P0.07 allows all low-speed peripherals to share a common bus.
+SPI on P0.02 / P0.03 / P0.05 keeps display routing compact toward the FPC connector.
+Display control pins are grouped close to the SPI bus to simplify routing.
+Interrupt lines are placed on dedicated GPIOs so the MCU can identify wake sources immediately.
+Buttons are assigned to GPIOs that can be routed toward the lower PCB edge, where the user interface is located.
+HAPTIC_EN is placed near the I2C-related section for compact routing.
+PFET gate control is placed on a dedicated GPIO to isolate display power switching from the communication buses.
+SWDIO / SWDCLK / RESET are broken out to the Tag-Connect footprint for reliable programming and debug access.
+Design Notes
+The RF section must be kept clear of copper and routed carefully to preserve BLE performance.
+The e-paper display requires dedicated high-voltage driving rails generated by the display power circuitry.
+The charger, regulator, and battery monitoring ICs form the core of the power subsystem.
+The design uses both communication buses and dedicated GPIO control to balance flexibility, low power, and routing simplicity.
 
 License
 
