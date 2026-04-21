@@ -71,20 +71,25 @@ Active & Critical Components
 | MBR0530              | Schottky Diode                          | SOD-123   | C77336     | Onsemi               |
 | TC2030-IDC           | SWD Tag-Connect                         | PCB       | —          | Tag-Connect          |
 +----------------------+-------------------------------------------+-----------+------------+----------------------+
-Component	Value	Package	Qty	Function
-Capacitors (decoupling)	100nF	0201	5	MCU + peripherals
-Capacitors (crystal load)	12pF	0201	4	Crystal stabilization
-Capacitors (bulk)	4.7uF	0402	4	Power buffering
-Capacitors (USB)	4.7uF	0402	1	USB decoupling
-Capacitors (power)	22uF	0402	2	RT6160 input
-Capacitors (charger)	1uF	0402	3	BQ25180 support
-Capacitors (EPD)	1uF / 50V	0402	9	Display driver
-Inductor (MCU DC/DC)	10uH	0402	1	nRF52840 regulator
-Inductor (buck-boost)	0.47uH	2012	1	RT6160
-Resistors (I2C)	10k	0201	2	Pull-ups
-Resistors (USB CC)	5.1k	0201	2	USB-C config
-Crystal	32 MHz	2016	1	RF + MCU clock
-Crystal	32.768 kHz	3215	1	RTC
+
+Passive Components
++-----------------------------+-----------+--------+-----+-----------------------------+
+| Component                   | Value     | Package| Qty | Function                    |
++-----------------------------+-----------+--------+-----+-----------------------------+
+| Decoupling capacitors       | 100nF     | 0201   | 5   | MCU + peripherals           |
+| Crystal load capacitors     | 12pF      | 0201   | 4   | Crystals                    |
+| Bulk capacitors             | 4.7uF     | 0402   | 4   | Power buffering             |
+| USB capacitor               | 4.7uF     | 0402   | 1   | USB stability               |
+| Power capacitors            | 22uF      | 0402   | 2   | RT6160 input               |
+| Charger capacitors          | 1uF       | 0402   | 3   | BQ25180 support            |
+| E-paper capacitors          | 1uF / 50V | 0402   | 9   | Display driver             |
+| MCU DC/DC inductor          | 10uH      | 0402   | 1   | nRF52840 regulator         |
+| Buck-boost inductor         | 0.47uH    | 2012   | 1   | RT6160                     |
+| I2C pull-up resistors       | 10k       | 0201   | 2   | SDA / SCL                  |
+| USB-C CC resistors          | 5.1k      | 0201   | 2   | USB configuration          |
+| Crystal                     | 32 MHz    | 2016   | 1   | MCU / RF clock             |
+| Crystal                     | 32.768 kHz| 3215   | 1   | RTC                        |
++-----------------------------+-----------+--------+-----+-----------------------------+
                               Main Features
 nRF52840 BLE-enabled microcontroller
 1.54" e-paper display with SPI interface
